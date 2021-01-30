@@ -1,3 +1,5 @@
+import { failedValidationMessage, missingDataMessage } from "../utils/index.js";
+
 /* 
 eq - equals
 neq - not equals
@@ -5,6 +7,7 @@ gt - greater than
 gte - greater than or equals
 contains - should contain condition value
 */
+
 export const validateMiddleware = async (req, res, next) => {
   let { data, rule } = req.body;
 
@@ -13,25 +16,9 @@ export const validateMiddleware = async (req, res, next) => {
     let arr = rule?.field?.split(".");
 
     if (!data[arr[0]].hasOwnProperty(arr[1])) {
-      return res.status(400).json({
-        message: `field ${rule.field} is missing from data.`,
-        status: "error",
-        data: null,
-      });
+      missingDataMessage(res, rule, data);
     } else if (data[arr[0]][arr[1]] !== rule.condition_value) {
-      return res.status(400).json({
-        message: `field ${rule.field} failed validation.`,
-        status: "error",
-        data: {
-          validation: {
-            error: true,
-            field: rule.field,
-            field_value: data[rule.field],
-            condition: rule.condition,
-            condition_value: rule.condition_value,
-          },
-        },
-      });
+      failedValidationMessage(res, rule, data);
     } else {
       return next();
     }
@@ -42,27 +29,11 @@ export const validateMiddleware = async (req, res, next) => {
     let arr = rule?.field?.split(".");
 
     if (!data[arr[0]].hasOwnProperty(arr[1])) {
-      return res.status(400).json({
-        message: `field ${rule.field} is missing from data.`,
-        status: "error",
-        data: null,
-      });
+      missingDataMessage(res, rule, data);
     } else if (data[arr[0]][arr[1]] > rule.condition_value) {
       return next();
     } else {
-      return res.status(400).json({
-        message: `field ${rule.field} failed validation.`,
-        status: "error",
-        data: {
-          validation: {
-            error: true,
-            field: rule.field,
-            field_value: data[rule.field],
-            condition: rule.condition,
-            condition_value: rule.condition_value,
-          },
-        },
-      });
+      failedValidationMessage(res, rule, data);
     }
   }
 
@@ -71,30 +42,14 @@ export const validateMiddleware = async (req, res, next) => {
     let arr = rule?.field?.split(".");
 
     if (!data[arr[0]].hasOwnProperty(arr[1])) {
-      return res.status(400).json({
-        message: `field ${rule.field} is missing from data.`,
-        status: "error",
-        data: null,
-      });
+      missingDataMessage(res, rule, data);
     } else if (
       data[arr[0]][arr[1]] > rule.condition_value ||
       data[arr[0]][arr[1]] === rule.condition_value
     ) {
       return next();
     } else {
-      return res.status(400).json({
-        message: `field ${rule.field} failed validation.`,
-        status: "error",
-        data: {
-          validation: {
-            error: true,
-            field: rule.field,
-            field_value: data[rule.field],
-            condition: rule.condition,
-            condition_value: rule.condition_value,
-          },
-        },
-      });
+      failedValidationMessage(res, rule, data);
     }
   }
 
@@ -103,27 +58,11 @@ export const validateMiddleware = async (req, res, next) => {
     let arr = rule?.field?.split(".");
 
     if (!data[arr[0]].hasOwnProperty(arr[1])) {
-      return res.status(400).json({
-        message: `field ${rule.field} is missing from data.`,
-        status: "error",
-        data: null,
-      });
+      missingDataMessage(res, rule, data);
     } else if (data[arr[0]][arr[1]] !== rule.condition_value) {
       return next();
     } else {
-      return res.status(400).json({
-        message: `field ${rule.field} failed validation.`,
-        status: "error",
-        data: {
-          validation: {
-            error: true,
-            field: rule.field,
-            field_value: data[rule.field],
-            condition: rule.condition,
-            condition_value: rule.condition_value,
-          },
-        },
-      });
+      failedValidationMessage(res, rule, data);
     }
   }
 
@@ -154,11 +93,7 @@ export const validateMiddleware = async (req, res, next) => {
   }
 
   if (typeof data === "object" && !data.hasOwnProperty(rule.field)) {
-    return res.status(400).json({
-      message: `field ${rule.field} is missing from data.`,
-      status: "error",
-      data: null,
-    });
+    missingDataMessage(res, rule, data);
   }
 
   if (
@@ -179,37 +114,13 @@ export const validateMiddleware = async (req, res, next) => {
     rule.condition === "eq" &&
     rule.condition_value !== data
   ) {
-    return res.status(400).json({
-      message: `field ${rule.field} failed validation.`,
-      status: "error",
-      data: {
-        validation: {
-          error: true,
-          field: rule.field,
-          field_value: data[rule.field],
-          condition: rule.condition,
-          condition_value: rule.condition_value,
-        },
-      },
-    });
+    failedValidationMessage(res, rule, data);
   } else if (
     typeof data === "object" &&
     rule.condition === "eq" &&
     rule.condition_value !== data[rule.field]
   ) {
-    return res.status(400).json({
-      message: `field ${rule.field} failed validation.`,
-      status: "error",
-      data: {
-        validation: {
-          error: true,
-          field: rule.field,
-          field_value: data[rule.field],
-          condition: rule.condition,
-          condition_value: rule.condition_value,
-        },
-      },
-    });
+    failedValidationMessage(res, rule, data);
   }
 
   if (rule.condition === "gte") {
@@ -219,57 +130,21 @@ export const validateMiddleware = async (req, res, next) => {
     ) {
       return next();
     }
-    return res.status(400).json({
-      message: `field ${rule.field} failed validation.`,
-      status: "error",
-      data: {
-        validation: {
-          error: true,
-          field: rule.field,
-          field_value: data[rule.field],
-          condition: rule.condition,
-          condition_value: rule.condition_value,
-        },
-      },
-    });
+    failedValidationMessage(res, rule, data);
   }
 
   if (rule.condition === "gt") {
     if (data[rule.field] > rule.condition_value) {
       return next();
     }
-    return res.status(400).json({
-      message: `field ${rule.field} failed validation.`,
-      status: "error",
-      data: {
-        validation: {
-          error: true,
-          field: rule.field,
-          field_value: data[rule.field],
-          condition: rule.condition,
-          condition_value: rule.condition_value,
-        },
-      },
-    });
+    failedValidationMessage(res, rule, data);
   }
 
   if (rule.condition === "neq") {
     if (data[rule.field] !== rule.condition_value) {
       return next();
     }
-    return res.status(400).json({
-      message: `field ${rule.field} failed validation.`,
-      status: "error",
-      data: {
-        validation: {
-          error: true,
-          field: rule.field,
-          field_value: data[rule.field],
-          condition: rule.condition,
-          condition_value: rule.condition_value,
-        },
-      },
-    });
+    failedValidationMessage(res, rule, data);
   }
 
   if (
@@ -280,21 +155,13 @@ export const validateMiddleware = async (req, res, next) => {
       typeof data === "string" &&
       !data?.toLowerCase().includes(rule.field?.toLowerCase())
     ) {
-      return res.status(400).json({
-        message: `field ${rule.field} is missing from data.`,
-        status: "error",
-        data: null,
-      });
+      missingDataMessage(res, rule, data);
     }
     if (
       Array.isArray(data) &&
       !data.includes(rule.condition_value, rule.field)
     ) {
-      return res.status(400).json({
-        message: `field ${rule.field} is missing from data.`,
-        status: "error",
-        data: null,
-      });
+      missingDataMessage(res, rule, data);
     }
   }
 
