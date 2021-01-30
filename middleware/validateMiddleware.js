@@ -81,16 +81,17 @@ export const validateMiddleware = async (req, res, next) => {
         },
       },
     });
-  } else if (
-    typeof data === "object" &&
-    rule.condition === "eq" &&
-    rule?.field?.includes(".")
-  ) {
-    let arr = rule?.field?.split(".");
-    arr.forEach((item, i) => {
-      console.log(data[arr[i]]);
-    });
   }
+  // else if (
+  //   typeof data === "object" &&
+  //   rule.condition === "eq" &&
+  //   rule?.field?.includes(".")
+  // ) {
+  //   let arr = rule?.field?.split(".");
+  //   arr.forEach((item, i) => {
+  //     console.log(data[arr[i]]);
+  //   });
+  // }
 
   if (rule.condition === "gte") {
     if (
