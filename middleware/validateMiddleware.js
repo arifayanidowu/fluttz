@@ -1,13 +1,3 @@
-import { validate } from "../utils/validate.js";
-
-const runConditions = (condition, match, conditionValue, dataValue) => {
-  if (condition === match && conditionValue === dataValue) {
-    return true;
-  } else {
-    return false;
-  }
-};
-
 /* 
 eq - equals
 neq - not equals
