@@ -4,6 +4,10 @@
   "description": "A rule validation API",
   "main": "server.js",
   "type": "module",
+  "engines": {
+    "node": "14.13.0",
+    "npm": "6.14.8"
+  },
   "scripts": {
     "dev": "nodemon --trace-warnings server.js",
     "start": "node server.js"
