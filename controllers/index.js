@@ -7,7 +7,7 @@ export const homeRoute = (req, res, next) => {
     twitter: "@arifayanidowu",
   };
   res.status(200).send({
-    message: "Validation Successful",
+    message: "Validation Successful.",
     status: "success",
     data,
   });
