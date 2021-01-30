@@ -84,7 +84,7 @@ export const validateMiddleware = async (req, res, next) => {
   } else if (
     typeof data === "object" &&
     rule.condition === "eq" &&
-    rule.field.includes(".")
+    rule?.field?.includes(".")
   ) {
     let arr = rule?.field?.split(".");
     arr.forEach((item, i) => {
